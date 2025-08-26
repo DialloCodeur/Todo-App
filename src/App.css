@@ -1,4 +1,16 @@
-.todo-head-childs{
+.app-wrapper{
+  color: white;
+  border-radius: 5px;
+  background-color: rgb(5, 5, 39);
+  margin: 50px 80px;
+}
+.wrapper-todo-head-childs{
   display: flex;
   justify-content: space-around;
 }
+
+.input-field, .wrapper-todo-head-childs-select, .wrapper-todo-head-childs-addbtn{
+  margin: 20px 15px;
+  background-color: rgb(5, 5, 39);
+  color: white;
+} 

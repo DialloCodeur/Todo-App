@@ -2,23 +2,24 @@ import './App.css'
 
 function App() {
 return(
-  <>
+  <div className='app-wrapper'>
     <TodoHead/>
     <TodoButtonsFilter/>
-  </>
+    <TodoBody/>
+  </div>
 );
 }
 
 function TodoHead(){
   return(
-    <div className='todo-head-childs'>
-       <input type='text' placeholder='Add new todo...'/>
-       <select>
+    <div className='wrapper-todo-head-childs'>
+       <input type='text' placeholder='Add new todo...' className='input-field'/>
+       <select className='wrapper-todo-head-childs-select'>
        <option value="urgent">Urgent</option>
        <option value="medium" selected>Medium</option>
        <option value="low">Low</option>
        </select>
-       <button type='button'>Add</button>
+       <button type='button' className='wrapper-todo-head-childs-addbtn'>Add</button>
     </div>
   );
 }
@@ -35,5 +36,13 @@ function TodoButtonsFilter(){
     </div>
   );
 }
-function TodoBody(){}
+function TodoBody(){
+  return(
+    <div>
+      <ul>
+        <li>Learn react.js</li>
+      </ul>
+    </div>
+  );
+}
 export default App
