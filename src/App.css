@@ -1,0 +1,4 @@
+.todo-head-childs{
+  display: flex;
+  justify-content: space-around;
+}
