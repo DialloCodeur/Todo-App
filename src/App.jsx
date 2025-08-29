@@ -6,26 +6,20 @@ import {useFetch} from "./hooks/useFetch.js";
 
 
 function App() {
-  /*const {loadings, datas, errors} = useFetch("https://jsonplaceholder.typicode.com/todos?_limit=10&_delay=5000");*/ 
-
   const [input, setInput] = useState("");
 
   const [inputedTodos, setInputedTodos] = useState([]);
 
   const handleAddTodo = () => {
     if(input.trim() === '') return; 
-    setInputedTodos([input, ...inputedTodos]); //I write it so because with react.js it's not possible to do mutation with arrays and objects
+    setInputedTodos([{id: Date.now(), text: input}, ...inputedTodos]); //I write it so because with react.js it's not possible to do mutation with arrays and objects
     setInput("");
   }
 
-  const updateTodos = () => {
+  const updateTodos = (id) => {
     if(inputedTodos.length === 0) return;
-    setInputedTodos([...inputedTodos, inputedTodos.filter(todo => todo.length > 3)]);
-
+    setInputedTodos(inputedTodos.filter(todo => todo.id !== id));// Here it's not necessary to use the spread operator because filter returns a new array (a shallow copy) and does not mutate inputedTodos.
   }
-
-  /*if(loadings) return <p style={{color: "white"}}>Loading...</p>;
-  if(errors) return <p>{errors}</p>;*/ 
 
 return(
   <div className='app-wrapper'> 
@@ -36,7 +30,6 @@ return(
     />
     <TodoButtonsFilter/>
     <TodoBody 
-    //todos={datas}
     inputedTodos={inputedTodos}
     updateTodos={updateTodos}
     />
@@ -68,22 +61,17 @@ function TodoButtonsFilter(){
     </div>
   );
 }
-function TodoBody({/*todos*/ inputedTodos, updateTodos}){
-  //console.log(inputedTodos);
-  //const fetchedTodos = todos.map(todo => (todo.title))
-  //let arrayOfTodos = [...inputedTodos, ...fetchedTodos]
-  //console.log(arrayOfTodos.length);
-  //console.log(arrayOfTodos);
+function TodoBody({inputedTodos, updateTodos}){
   return(
     <div style={{paddingLeft: "50px", marginTop: "0"}} className="todos-wrapper">
       {inputedTodos.map(todo => (
-        <h1 key={inputedTodos.indexOf(todo)} className="todo">
+        <h1 key={todo.id} className="todo">
           <input type="checkbox"/>
-          {todo}
-          <button className="delete-button"><FontAwesomeIcon icon={faTrashCan} onClick={updateTodos}/></button>
+          {todo.text}
+          <button className="delete-button" onClick={() => updateTodos(todo.id)}><FontAwesomeIcon icon={faTrashCan}/></button>
         </h1>
       ))}
     </div>
   );
 }
-export default App
+export default App  
