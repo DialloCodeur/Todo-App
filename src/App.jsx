@@ -12,7 +12,7 @@ function App() {
 
   const handleAddTodo = () => {
     if(input.trim() === '') return; 
-    setInputedTodos([{id: Date.now(), text: input}, ...inputedTodos]); //I write it so because with react.js it's not possible to do mutation with arrays and objects
+    setInputedTodos([{id: Date.now(), text: input}, ...inputedTodos]); //I write it so because with react.js it's not possible to mutate arrays and objects
     setInput("");
   }
 
