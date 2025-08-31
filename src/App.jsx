@@ -10,16 +10,29 @@ function App() {
 
   const [inputedTodos, setInputedTodos] = useState([]);
 
-  const handleAddTodo = () => {
+  const [checkedItems, setCheckedItems] = useState([false]);
+
+  const handleAddTodo = (e) => {
     if(input.trim() === '') return; 
     setInputedTodos([{id: Date.now(), text: input}, ...inputedTodos]); //I write it so because with react.js it's not possible to mutate arrays and objects
-    setInput("");
+    let copyOfCheckedItems = [...checkedItems];
+    copyOfCheckedItems.push(e.target.checked);
+    setCheckedItems(copyOfCheckedItems);
+    setInput(""); 
   }
 
   const updateTodos = (id) => {
     if(inputedTodos.length === 0) return;
     setInputedTodos(inputedTodos.filter(todo => todo.id !== id));// Here it's not necessary to use the spread operator because filter returns a new array (a shallow copy) and does not mutate inputedTodos.
   }
+
+  const handleFinishedbtnOpacity = (index) => {
+    const copyOfCheckedItems = [...checkedItems];
+    copyOfCheckedItems[index] = !copyOfCheckedItems[index];
+    setCheckedItems(copyOfCheckedItems);
+  }
+
+  const isAllCheckboxesUnchecked = checkedItems.every((item) => item === false);
 
 return(
   <div className='app-wrapper'> 
@@ -28,19 +41,23 @@ return(
     onInputChange={setInput} 
     onInputedTodosChange={handleAddTodo}
     />
-    <TodoButtonsFilter/>
+    <TodoButtonsFilter
+    isAllCheckboxesUnchecked={isAllCheckboxesUnchecked}
+    />
     <TodoBody 
     inputedTodos={inputedTodos}
     updateTodos={updateTodos}
+    checkedItems={checkedItems}
+    onOpacityChange={handleFinishedbtnOpacity}
     />
-  </div>
+  </div> 
 );
 }
 
 function TodoHead({value, onInputChange, onInputedTodosChange}){
   return(
     <div className='wrapper-todo-head-childs'>
-      <input type='text' placeholder='Add new todo...' className='input-field' value={value} onChange={e => onInputChange(e.target.value)} onKeyDown={e => e.key === 'Enter' && onInputedTodosChange()}/>
+      <input type='text' placeholder='Add new todo...' className='input-field' value={value} onChange={e => onInputChange(e.target.value)} onKeyDown={e => e.key === 'Enter' && onInputedTodosChange(e)}/>
       <select className='wrapper-todo-head-childs-select' defaultValue={"medium"}>
        <option value="urgent">Urgent</option>
        <option value="medium">Medium</option>
@@ -50,23 +67,25 @@ function TodoHead({value, onInputChange, onInputedTodosChange}){
     </div>
   );
 }
-function TodoButtonsFilter(){
+function TodoButtonsFilter({isAllCheckboxesUnchecked}){
   return(
     <div className='wrapper-todo-buttons-filter-childs'>
       <button type='button' className='wrapper-todo-buttons-filter-childs-all-allbtn'>All</button>
       <button type='button' className='wrapper-todo-buttons-filter-childs-urgentbtn'>Urgent</button>
       <button type='button' className='wrapper-todo-buttons-filter-childs-mediumbtn'>Medium</button>
       <button type='button' className='wrapper-todo-buttons-filter-childs-lowbtn'>Low</button>
-     <button className='wrapper-todo-buttons-filter-childs-finishbtn'>Finish selectionned todos</button>
+     <button className='wrapper-todo-buttons-filter-childs-finishbtn' style={{opacity: isAllCheckboxesUnchecked ? 0.2 : 1}}>Finish selectionned todos</button>
     </div>
   );
 }
-function TodoBody({inputedTodos, updateTodos}){
+function TodoBody({inputedTodos, updateTodos, onOpacityChange, checkedItems}){
   return(
     <div style={{paddingLeft: "50px", marginTop: "0"}} className="todos-wrapper">
-      {inputedTodos.map(todo => (
+      {inputedTodos.map(todo => ( 
         <h1 key={todo.id} className="todo">
-          <input type="checkbox"/>
+          {checkedItems.map((isChecked, index) => (
+            <input name={todo} type="checkbox" checked={isChecked} onChange={() => onOpacityChange(index)}/> 
+          ))}
           {todo.text}
           <button className="delete-button" onClick={() => updateTodos(todo.id)}><FontAwesomeIcon icon={faTrashCan}/></button>
         </h1>
