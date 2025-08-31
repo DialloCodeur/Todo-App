@@ -10,14 +10,11 @@ function App() {
 
   const [inputedTodos, setInputedTodos] = useState([]);
 
-  const [checkedItems, setCheckedItems] = useState([false]);
+  const [checkedItems, setCheckedItems] = useState(Array(inputedTodos.length).fill(false));
 
-  const handleAddTodo = (e) => {
+  const handleAddTodo = () => {
     if(input.trim() === '') return; 
     setInputedTodos([{id: Date.now(), text: input}, ...inputedTodos]); //I write it so because with react.js it's not possible to mutate arrays and objects
-    let copyOfCheckedItems = [...checkedItems];
-    copyOfCheckedItems.push(e.target.checked);
-    setCheckedItems(copyOfCheckedItems);
     setInput(""); 
   }
 
@@ -57,7 +54,7 @@ return(
 function TodoHead({value, onInputChange, onInputedTodosChange}){
   return(
     <div className='wrapper-todo-head-childs'>
-      <input type='text' placeholder='Add new todo...' className='input-field' value={value} onChange={e => onInputChange(e.target.value)} onKeyDown={e => e.key === 'Enter' && onInputedTodosChange(e)}/>
+      <input type='text' placeholder='Add new todo...' className='input-field' value={value} onChange={e => onInputChange(e.target.value)} onKeyDown={e => e.key === 'Enter' && onInputedTodosChange()}/>
       <select className='wrapper-todo-head-childs-select' defaultValue={"medium"}>
        <option value="urgent">Urgent</option>
        <option value="medium">Medium</option>
@@ -81,11 +78,9 @@ function TodoButtonsFilter({isAllCheckboxesUnchecked}){
 function TodoBody({inputedTodos, updateTodos, onOpacityChange, checkedItems}){
   return(
     <div style={{paddingLeft: "50px", marginTop: "0"}} className="todos-wrapper">
-      {inputedTodos.map(todo => ( 
+      {inputedTodos.map((todo, index) => ( 
         <h1 key={todo.id} className="todo">
-          {checkedItems.map((isChecked, index) => (
-            <input name={todo} type="checkbox" checked={isChecked} onChange={() => onOpacityChange(index)}/> 
-          ))}
+          <input name={todo} key={index} type="checkbox" defaultChecked={checkedItems[index]} onChange={() => onOpacityChange(index)}/>
           {todo.text}
           <button className="delete-button" onClick={() => updateTodos(todo.id)}><FontAwesomeIcon icon={faTrashCan}/></button>
         </h1>
