@@ -10,11 +10,13 @@ function App() {
 
   const [inputedTodos, setInputedTodos] = useState([]);
 
-  const [checkedItems, setCheckedItems] = useState(Array(inputedTodos.length).fill(false));
+  const [checkedItems, setCheckedItems] = useState({});
+
+  const [priority, setPriority] = useState('');
 
   const handleAddTodo = () => {
     if(input.trim() === '') return; 
-    setInputedTodos([{id: Date.now(), text: input}, ...inputedTodos]); //I write it so because with react.js it's not possible to mutate arrays and objects
+    setInputedTodos([{id: Date.now(), text: input, priority: priority}, ...inputedTodos]); //I write it so because with react.js it's not possible to mutate arrays and objects
     setInput(""); 
   }
 
@@ -23,13 +25,13 @@ function App() {
     setInputedTodos(inputedTodos.filter(todo => todo.id !== id));// Here it's not necessary to use the spread operator because filter returns a new array (a shallow copy) and does not mutate inputedTodos.
   }
 
-  const handleFinishedbtnOpacity = (index) => {
-    const copyOfCheckedItems = [...checkedItems];
-    copyOfCheckedItems[index] = !copyOfCheckedItems[index];
-    setCheckedItems(copyOfCheckedItems);
+  const handleFinishedbtnOpacity = (id) => {
+    setCheckedItems(prev => ({
+      ...prev,
+      [id]: !prev[id] //Use id as a key and set its value to the opposite of the previous one
+    }))
   }
-
-  const isAllCheckboxesUnchecked = checkedItems.every((item) => item === false);
+  const isAllCheckboxesUnchecked = Object.values(checkedItems).every((item) => item === false);
 
 return(
   <div className='app-wrapper'> 
@@ -37,6 +39,8 @@ return(
     value={input} 
     onInputChange={setInput} 
     onInputedTodosChange={handleAddTodo}
+    priority={priority}
+    onPriorityChange={setPriority}
     />
     <TodoButtonsFilter
     isAllCheckboxesUnchecked={isAllCheckboxesUnchecked}
@@ -46,18 +50,19 @@ return(
     updateTodos={updateTodos}
     checkedItems={checkedItems}
     onOpacityChange={handleFinishedbtnOpacity}
+    priority={priority}
     />
   </div> 
 );
 }
 
-function TodoHead({value, onInputChange, onInputedTodosChange}){
+function TodoHead({value, onInputChange, onInputedTodosChange, priority, onPriorityChange}){
   return(
     <div className='wrapper-todo-head-childs'>
       <input type='text' placeholder='Add new todo...' className='input-field' value={value} onChange={e => onInputChange(e.target.value)} onKeyDown={e => e.key === 'Enter' && onInputedTodosChange()}/>
-      <select className='wrapper-todo-head-childs-select' defaultValue={"medium"}>
-       <option value="urgent">Urgent</option>
+      <select className='wrapper-todo-head-childs-select' value={priority} onChange={e => onPriorityChange(e.target.value)}>
        <option value="medium">Medium</option>
+       <option value="urgent">Urgent</option>
        <option value="low">Low</option>
        </select>
       <button type='button' className='wrapper-todo-head-childs-addbtn' onClick={onInputedTodosChange}>Add</button> 
@@ -71,7 +76,7 @@ function TodoButtonsFilter({isAllCheckboxesUnchecked}){
       <button type='button' className='wrapper-todo-buttons-filter-childs-urgentbtn'>Urgent</button>
       <button type='button' className='wrapper-todo-buttons-filter-childs-mediumbtn'>Medium</button>
       <button type='button' className='wrapper-todo-buttons-filter-childs-lowbtn'>Low</button>
-     <button className='wrapper-todo-buttons-filter-childs-finishbtn' style={{opacity: isAllCheckboxesUnchecked ? 0.2 : 1}}>Finish selectionned todos</button>
+      <button className='wrapper-todo-buttons-filter-childs-finishbtn'style={{opacity: isAllCheckboxesUnchecked ? 0.2 : 1, ...(!isAllCheckboxesUnchecked && {backgroundColor: "rgb(52, 175, 175)"})}}>Finish selectionned todos</button>
     </div>
   );
 }
@@ -80,8 +85,8 @@ function TodoBody({inputedTodos, updateTodos, onOpacityChange, checkedItems}){
     <div style={{paddingLeft: "50px", marginTop: "0"}} className="todos-wrapper">
       {inputedTodos.map((todo, index) => ( 
         <h1 key={todo.id} className="todo">
-          <input name={todo} key={index} type="checkbox" defaultChecked={checkedItems[index]} onChange={() => onOpacityChange(index)}/>
-          {todo.text}
+          <input name={todo} key={index} type="checkbox" checked={!!checkedItems[todo.id]} onChange={() => onOpacityChange(todo.id)}/>
+          {todo.text}  <span className={todo.priority ? todo.priority.toLowerCase() : "medium"}>{todo.priority.toLowerCase() ? todo.priority : "medium"}</span>
           <button className="delete-button" onClick={() => updateTodos(todo.id)}><FontAwesomeIcon icon={faTrashCan}/></button>
         </h1>
       ))}
