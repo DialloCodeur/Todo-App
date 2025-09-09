@@ -2,7 +2,7 @@
   color: white; 
   border-radius: 5px;
   background-color: rgb(5, 5, 39);
-  margin: 50px 80px;
+  margin: 50px 200px;
 }
 .wrapper-todo-head-childs{
   display: grid;
@@ -56,6 +56,10 @@ button[class^="wrapper-todo-buttons-filter-childs"]{
   cursor: pointer;
 }
 
+button[class^="wrapper-todo-buttons-filter-childs"]:not(.wrapper-todo-buttons-filter-childs-finishbtn):hover{
+  background-color: rgb(52, 175, 175); 
+}
+
 .wrapper-todo-buttons-filter-childs-finishbtn{
   grid-area: 1/7/2/8;
   /*grid-row-start: 1;
@@ -82,4 +86,31 @@ button[class^="wrapper-todo-buttons-filter-childs"]{
 .delete-button:hover{
   color: black;
   background-color: red;
+}
+
+.urgent{
+  color: red;
+  font-size:large;
+  background-color: rgb(61, 6, 6);
+  padding: 3px 5px;
+  border-radius: 8px;
+  margin-left: 5px;
+}
+
+.medium{
+  color: yellow;
+  font-size:large;
+  background-color: rgb(68, 68, 4);
+  padding: 3px 5px;
+  border-radius: 8px;
+  margin-left: 5px;
+}
+
+.low{
+  color: green;
+  font-size:large;
+  background-color: rgb(3, 39, 3);
+  padding: 3px 5px;
+  border-radius: 8px;
+  margin-left: 5px;
 }
